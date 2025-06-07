@@ -6,13 +6,20 @@ variable "region" {
   default     = "ap-southeast-2"
 }
 
-variable "instance_type" {
-  description = "Type of EC2 instance to provision"
-  default     = "t2.micro"
+variable "lambda_function_name" {
+  description = "Lambda function name"
+  default     = "hello-world-lambda"
 }
 
-variable "instance_name" {
-  description = "EC2 instance name"
-  default     = "Provisioned by Terraform"
+variable "api_path" {
+  description = "API path"
+  default     = "hello"
 }
+
+variable "api_stage" {
+  description = "API stage"
+  default     = "dev"
+}
+
+
 

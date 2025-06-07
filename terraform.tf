@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: MPL-2.0
 
 terraform {
-/*
   cloud {
     organization = "MauriceHuang"
 
@@ -10,7 +9,6 @@ terraform {
       name = "learn-terraform"
     }
   }
-*/
 
   required_providers {
     aws = {
