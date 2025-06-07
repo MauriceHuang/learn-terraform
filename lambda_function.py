@@ -5,5 +5,5 @@ def lambda_handler(event, context):
             'Content-Type': 'application/json',
             'Access-Control-Allow-Origin': '*'
         },
-        'body': '{"message": "Hello from Lambda!"}'
+        'body': '{"message": "Hello from Maurice!"}'
     }
