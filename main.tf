@@ -44,21 +44,9 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
 data "archive_file" "lambda_zip"{
   type = "zip"
   output_path = "${var.lambda_function_name}.zip"
-  source {
-        content = <<EOF
-def lambda_handler(event, context):
-    return {
-        'statusCode': 200,
-        'headers': {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*'
-        },
-        'body': '{"message": "Hello from Lambda!"}'
-    }
-EOF
-    filename = "lambda_function.py"
-  }
-  }
+  source_file = "lambda_function.py"
+
+}
 
 resource "aws_lambda_function" "main"{
   filename = data.archive_file.lambda_zip.output_path
