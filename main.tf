@@ -163,6 +163,6 @@ resource "aws_lambda_function" "anonymizer" {
   package_type  = "Image"
   image_uri     = "${aws_ecr_repository.lambda_repo.repository_url}:latest"
   role          = aws_iam_role.lambda_exec.arn
-  timeout       = 30
-  memory_size   = 512
+  timeout       = 60
+  memory_size   = 2048
 }
