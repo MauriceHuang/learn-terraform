@@ -12,8 +12,13 @@ analyzer.registry.add_recognizer(pronoun_recognizer)
 anonymizer = AnonymizerEngine()
 
 def lambda_handler(event, context):
-    # Get the text to anonymize from the event
-    text_to_anonymize = event.get("text", "")
+    # Parse the body if coming from API Gateway
+    if "body" in event:
+        body = json.loads(event["body"])
+    else:
+        body = event
+
+    text_to_anonymize = body.get("text", "")
 
     print('text_to_anonymize', text_to_anonymize)
 
