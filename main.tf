@@ -41,6 +41,25 @@ resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
+resource "aws_iam_role" "lambda_exec" {
+  name = "lambda_exec_role"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_policy" {
+  role       = aws_iam_role.lambda_exec.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
 data "archive_file" "lambda_zip"{
   type = "zip"
   output_path = "${var.lambda_function_name}.zip"
@@ -59,7 +78,6 @@ resource "aws_lambda_function" "main"{
     Name = var.lambda_function_name
   }
 }
-
 
 resource "aws_api_gateway_rest_api" "main"{
   name = "${var.lambda_function_name}-api"
@@ -134,4 +152,17 @@ resource "aws_api_gateway_stage" "main" {
   deployment_id = aws_api_gateway_deployment.main.id
   rest_api_id   = aws_api_gateway_rest_api.main.id
   stage_name    = var.api_stage
+}
+
+resource "aws_ecr_repository" "lambda_repo" {
+  name = "lambda-anonymizer"
+}
+
+resource "aws_lambda_function" "anonymizer" {
+  function_name = "anonymizer"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.lambda_repo.repository_url}:latest"
+  role          = aws_iam_role.lambda_exec.arn
+  timeout       = 30
+  memory_size   = 512
 }
