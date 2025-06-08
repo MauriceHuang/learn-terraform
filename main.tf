@@ -60,7 +60,6 @@ resource "aws_lambda_function" "main"{
   }
 }
 
-
 resource "aws_api_gateway_rest_api" "main"{
   name = "${var.lambda_function_name}-api"
   description = "API Gateway for ${var.lambda_function_name}"
@@ -134,4 +133,17 @@ resource "aws_api_gateway_stage" "main" {
   deployment_id = aws_api_gateway_deployment.main.id
   rest_api_id   = aws_api_gateway_rest_api.main.id
   stage_name    = var.api_stage
+}
+
+resource "aws_ecr_repository" "lambda_repo" {
+  name = "lambda-anonymizer"
+}
+
+resource "aws_lambda_function" "anonymizer" {
+  function_name = "anonymizer"
+  package_type  = "Image"
+  image_uri     = "${aws_ecr_repository.lambda_repo.repository_url}:latest"
+  role          = aws_iam_role.lambda_exec.arn
+  timeout       = 30
+  memory_size   = 512
 }
